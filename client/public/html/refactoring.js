@@ -16,7 +16,7 @@ const sendRequest = async (data) => {
     const responseData = await response.json();
     modal.style.display = "none";
     if (responseData.success) {
-      // window.location.href = "../index.html";
+      window.location.href = "../index.html";
     }
   } catch (error) {
     console.log(`error`);
@@ -27,7 +27,7 @@ const refactoring = () => {
   const getOption = document.querySelectorAll("select > option");
 
   let data = [];
-  let lastParent = {};
+  let lastParent = 0;
   let lastAncestors = [];
   let lastNumOfnbsp = 0;
 
@@ -37,18 +37,17 @@ const refactoring = () => {
     if (numOfnbsp === 0) {
       lastAncestors = [];
       data.push({
-        name: option.innerText.trim(),
+        title: option.innerText.trim(),
         value: +option.value,
         ancestors: [],
-        parent: {},
+        parent: 0,
       });
     }
 
     if (lastNumOfnbsp < numOfnbsp) {
       lastAncestors.push(lastParent);
-
       data.push({
-        name: option.innerText.trim(),
+        title: option.innerText.trim(),
         value: +option.value,
         ancestors: lastAncestors.slice(0),
         parent: lastParent,
@@ -57,7 +56,7 @@ const refactoring = () => {
 
     if (lastNumOfnbsp === numOfnbsp && numOfnbsp !== 0) {
       data.push({
-        name: option.innerText.trim(),
+        title: option.innerText.trim(),
         value: +option.value,
         ancestors: lastAncestors.slice(),
         parent: lastAncestors[arrLength],
@@ -66,24 +65,17 @@ const refactoring = () => {
 
     if (lastNumOfnbsp > numOfnbsp && numOfnbsp !== 0) {
       let sequenceQuantity = (lastNumOfnbsp - numOfnbsp) / 4;
-
       lastAncestors = lastAncestors.slice(0, -sequenceQuantity);
-
       data.push({
-        name: option.innerText.trim(),
+        title: option.innerText.trim(),
         value: +option.value,
         ancestors: lastAncestors.slice(),
-        parent: lastAncestors[arrLength] ? lastAncestors[arrLength] : {},
+        parent: lastAncestors[lastAncestors.length - 1],
       });
     }
-    lastParent = {
-      ...lastParent,
-      name: option.innerText.trim(),
-      value: +option.value,
-    };
+    lastParent = +option.value;
 
     lastNumOfnbsp = numOfnbsp;
   });
-
   sendRequest(data);
 };

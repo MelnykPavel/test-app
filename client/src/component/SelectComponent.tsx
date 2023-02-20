@@ -3,47 +3,18 @@ import { TreeSelect } from "antd";
 
 const { SHOW_PARENT } = TreeSelect;
 
-const treeData = [
-  {
-    title: "Node1",
-    value: "0-0",
-    key: "0-0",
-    children: [
-      {
-        title: "Child Node1",
-        value: "0-0-0",
-        key: "0-0-0",
-      },
-    ],
-  },
-  {
-    title: "Node2",
-    value: "0-1",
-    key: "0-1",
-    children: [
-      {
-        title: "Child Node3",
-        value: "0-1-0",
-        key: "0-1-0",
-      },
-      {
-        title: "Child Node4",
-        value: "0-1-1",
-        key: "0-1-1",
-      },
-      {
-        title: "Child Node5",
-        value: "0-1-2",
-        key: "0-1-2",
-      },
-    ],
-  },
-];
+interface SelectComponentProps {
+  value: string[];
+  setValue: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
-export const SelectComponent: React.FC = () => {
-  const [value, setValue] = useState(["0-0-0"]);
+export const SelectComponent: React.FC<SelectComponentProps> = ({
+  value,
+  setValue,
+}) => {
   const [isLoading, setLoading] = useState(false);
-  const [selectData, setSelectData] = useState(null);
+  const [treeData, setTreeData] = useState([]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -57,39 +28,29 @@ export const SelectComponent: React.FC = () => {
         });
 
         const data = await response.json();
-        console.log(data);
 
-        setSelectData(data);
+        setTreeData(data.treeData);
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        // return toast({
-        //   title: "Error Occured!",
-        //   description: "Failed to get categories!",
-        //   status: "error",
-        //   duration: 5000,
-        //   isClosable: true,
-        //   position: "bottom-right",
-        //   variant: "solid",
-        // });
       }
     })();
-  }, []);
+  }, [setTreeData]);
 
   const onChange = (newValue: string[]) => {
-    console.log("onChange ", value);
     setValue(newValue);
   };
 
   const tProps = {
-    treeData,
-    value,
+    ...(treeData && { treeData }),
+    ...(value && { defaultValue: value }),
     onChange,
     treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
     placeholder: "Please select",
-    defaultOpen: true,
-    maxTagTextLength: 20,
+    defaultOpen: false,
+    maxTagCount: 2,
+    maxTagTextLength: 18,
     loading: isLoading,
     style: {
       width: "100%",

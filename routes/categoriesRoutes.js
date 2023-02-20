@@ -1,14 +1,9 @@
 const express = require("express");
-const {
-  allCategories,
-  createCategories,
-} = require("../controllers/categoriesControllers");
+const { allCategories, createCategories } = require("../controllers");
 
-const categoriesRoutes = express.Router();
+const router = express.Router();
 
-categoriesRoutes.route("/").post(createCategories);
-categoriesRoutes.route("/getCategories").get(allCategories);
+router.route("/").post(createCategories);
+router.route("/getCategories").get(allCategories);
 
-module.exports = {
-  categoriesRoutes,
-};
+module.exports = router;
